@@ -27,7 +27,7 @@ public class CommentUpNumJob extends ThumbUpFactory {
      * 每一分钟，清理一下所有点赞数
      */
     @Override
-    @Scheduled(cron = "0 0/5 * * * ?")
+    @Scheduled(cron = "0 0/1 * * * ? ")
     protected void addThumbUpJob() {
         log.info("评论点赞定时任务开始工作");
         doAddDiscussUp(RedisConstant.COMMENT_BASE_UP_KEY + SPLIT_SYMBOL + "*", TagsEnum.UP.getFlag());

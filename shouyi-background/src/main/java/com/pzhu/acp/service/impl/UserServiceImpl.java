@@ -211,6 +211,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User safetyUser = getSafetyUser(dataUser);
         // 3. 记录用户的登录态
         StpUtil.login(safetyUser.getId());
+        // 获取Token
         return StpUtil.getTokenInfo().tokenValue;
     }
 

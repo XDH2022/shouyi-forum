@@ -12,14 +12,14 @@
       >
         <div class="logo">
           <img class="logo-img" src="../assets/image/logo.png" @click="doReload"/>
-          <h1 class="logo-text">校友交流平台</h1>
+          <h1 class="logo-text">首义交流平台</h1>
         </div>
         <el-menu-item index="/">首页</el-menu-item>
         <el-menu-item index="/origin">组织</el-menu-item>
         <el-menu-item index="/posts">论坛</el-menu-item>
         <el-menu-item index="/userInfo">个人</el-menu-item>
         <div class="header-search">
-          <el-input class="header-input" v-model="keyWord" placeholder="论坛搜索" clearable/>
+          <el-input class="header-input"  v-model="keyWord" placeholder="论坛搜索" clearable/>
           <div class="search-btn">
             <el-button color="#d5ebe1" :icon="Search" round @click="searchPosts">搜索</el-button>
           </div>
@@ -213,6 +213,7 @@ const searchPosts = () => {
 }
 
 .header-input {
+  margin-right: 10px;
   height: 35px;
   width: 270px;
   border-radius: 16px 0 0 16px;

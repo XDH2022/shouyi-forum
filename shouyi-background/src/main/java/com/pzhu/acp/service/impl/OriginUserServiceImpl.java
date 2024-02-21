@@ -8,8 +8,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.pzhu.acp.common.ErrorCode;
 import com.pzhu.acp.constant.CommonConstant;
 import com.pzhu.acp.mapper.OriginMapper;
+import com.pzhu.acp.mapper.UserMapper;
 import com.pzhu.acp.model.entity.Origin;
 import com.pzhu.acp.model.entity.OriginUser;
+import com.pzhu.acp.model.entity.User;
 import com.pzhu.acp.model.query.DeleteOriginUserQuery;
 import com.pzhu.acp.model.query.GetOriginUserQuery;
 import com.pzhu.acp.service.OriginUserService;
@@ -53,7 +55,7 @@ public class OriginUserServiceImpl extends ServiceImpl<OriginUserMapper, OriginU
     @Resource
     private OriginMapper originMapper;
     @Resource
-    private CollegeMapper collegeMapper;
+    private UserMapper userMapper;
 
     @Override
     public Boolean addOriginUser(OriginUser originUser) {
@@ -69,6 +71,14 @@ public class OriginUserServiceImpl extends ServiceImpl<OriginUserMapper, OriginU
                     if (originPeopleNum > OriginConstant.MAX_ORIGIN_PEOPLE_NUM) {
                         log.warn("该组织人数已满，组织id为：{}", originUser.getOid());
                         throw new BusinessException(ErrorCode.MORE_ORIGIN_PEOPLE_NUM);
+                    }
+                    //检查用户是否存在
+                    QueryWrapper<User> userQueryWrapper=new QueryWrapper<>();
+                    userQueryWrapper.eq("id", originUser.getUid());
+                    Long userCount = userMapper.selectCount(userQueryWrapper);
+                    if( userCount == OperationConstant.COUNT_NUM){ //如果查询结果为 0，表示该用户不存在
+                        log.warn("该用户不存在：{}", originUser.getUid());
+                        throw new BusinessException(ErrorCode.NO_EXISTED_DATA);
                     }
                     //检查该组织是否拥有用户
                     QueryWrapper<OriginUser> originUserQueryWrapper = new QueryWrapper<>();
