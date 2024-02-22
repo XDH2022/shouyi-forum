@@ -319,29 +319,7 @@ const handlePageChange = (val: number) => {
   getOriginInfo();
 };
 
-// 删除操作
-const deleteQuery = reactive<any>({
-  ids: []
-})
-const handleDelete = (index: number, row: any) => {
-  ElMessageBox.confirm(
-      '确定要删除该组织吗?',
-      'Warning',
-  )
-      .then(async () => {
-        deleteQuery.ids?.push(row.id)
-        const result = await deleteToOrigin(deleteQuery)
-        if (result.code == 0) {
-          ElMessage({
-            type: 'success',
-            message: '删除组织成功'
-          })
-          await getOriginInfo()
-        } else {
-          ElMessage.error(result.message)
-        }
-      })
-};
+
 
 // 表格编辑时弹窗和保存
 const editOrigin = ref<OriginType>({})
@@ -381,23 +359,37 @@ const goOriginUser = (index: number, row: any) => {
   console.log(index, row)
   router.push({path: `/originUser/${row?.id}`})
 }
+const handleDelete = (index: number, row: any) => {
+  ElMessageBox.confirm(
+      '确定要删除该组织吗?',
+      'Warning',
+  )
+      .then(async () => {
+        selectionQuery.ids = [row.id]; // 只设置当前选中的组织ID
+        const result = await deleteToOrigin(selectionQuery)
+        if (result.code == 0) {
+          ElMessage.success("删除该组织成功！");
+          await getOriginInfo();
+          selectionQuery.ids = []; // 删除完成后清空选中的组织ID
+        } else {
+          ElMessage.error(result.message)
+        }
+      })
+};
 
 /**
  * 多选框事件
  */
 const selectionQuery = reactive<any>({
-      ids: []
-    }
-)
+  ids: []
+})
 const handleSelectionChange = (rows?: any) => {
-  rows.forEach((row: any) => {
-    selectionQuery.ids.push(row.id)
-  })
+  selectionQuery.ids = rows.map((row: any) => row.id);
 }
 
 const batchDelete = () => {
   if (selectionQuery.ids[0] == null) {
-    ElMessage.warning("未选中删除学院目标")
+    ElMessage.warning("未选中删除组织目标")
     return;
   }
   ElMessageBox.confirm(
@@ -412,6 +404,7 @@ const batchDelete = () => {
             message: '批量删除组织成功'
           })
           await getOriginInfo()
+          selectionQuery.ids=[]
         } else {
           ElMessage.error(result.message)
         }

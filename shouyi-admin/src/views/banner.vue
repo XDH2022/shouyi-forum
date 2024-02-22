@@ -210,8 +210,14 @@ const addDoNotice = async () => {
   if (result.code == 0) {
     ElMessage.success('添加轮播图成功！')
     addVisible.value = false
-    await getOriginInfo()
-  } else {
+    await getOriginInfo(); // 刷新轮播图数据
+    fileList.value=[]
+  }
+  else if(result.code == 50000)
+  {
+    ElMessage.error('图片名称过长')
+  }
+  else {
     ElMessage.error(result.message)
     addVisible.value = false
   }
@@ -249,7 +255,7 @@ const handleDelete = (index: number, row: any) => {
       'Warning',
   )
       .then(async () => {
-        deleteQuery.ids?.push(row.id)
+        deleteQuery.ids = [row.id];
         const result = await deleteBannerInfo(deleteQuery)
         if (result.code == 0) {
           ElMessage({
@@ -257,6 +263,7 @@ const handleDelete = (index: number, row: any) => {
             message: '删除轮播图成功'
           })
           await getOriginInfo()
+          deleteQuery.ids = []
         } else {
           ElMessage({
             type: 'error',
@@ -296,9 +303,7 @@ const selectionQuery = reactive<any>({
     }
 )
 const handleSelectionChange = (rows?: any) => {
-  rows.forEach((row: any) => {
-    selectionQuery.ids.push(row.id)
-  })
+  selectionQuery.ids = rows.map((row: any) => row.id);
 }
 
 const batchDelete = () => {
@@ -318,6 +323,7 @@ const batchDelete = () => {
             message: '批量删除轮播图成功'
           })
           await getOriginInfo()
+          selectionQuery.ids = []
         } else {
           ElMessage({
             type: 'error',

@@ -203,7 +203,7 @@ const query = reactive({
 const tableData = ref<TableItem[]>([]);
 const pageTotal = ref(0);
 // 获取表格数据
-const getOriginInfo = async () => {
+const getUserData = async () => {
   const result = await getUserInfo(query)
   console.log(result)
   if (result.code == 0) {
@@ -214,7 +214,7 @@ const getOriginInfo = async () => {
   }
 }
 onMounted(() => {
-  getOriginInfo()
+  getUserData()
 })
 
 const getCollegeId = (id: bigint) => {
@@ -272,7 +272,7 @@ const handlePictureCardPreview = (file: UploadFile) => {
 // 分页导航
 const handlePageChange = (val: number) => {
   query.pageNum = val;
-  getOriginInfo();
+  getUserData()
 };
 
 // 删除操作
@@ -292,7 +292,7 @@ const handleDelete = (index: number, row: any) => {
             type: 'success',
             message: '删除用户成功'
           })
-          await getOriginInfo()
+          await  getUserData()
         } else {
           ElMessage.error(result.message)
         }
@@ -326,7 +326,7 @@ const saveEdit = async () => {
   if (result.code == 0) {
     ElMessage.success('更新用户成功！')
     editVisible.value = false;
-    await getOriginInfo()
+    await getUserData()
   } else {
     ElMessage.error(result.message)
     editVisible.value = false;
@@ -337,7 +337,7 @@ const saveEdit = async () => {
  * 条件查询
  */
 const handleSearch = async () => {
-  await getOriginInfo()
+  await getUserData()
 }
 
 /**
@@ -348,18 +348,16 @@ const selectionQuery = reactive<any>({
     }
 )
 const handleSelectionChange = (rows?: any) => {
-  rows.forEach((row: any) => {
-    selectionQuery.ids.push(row.userId)
-  })
+  selectionQuery.ids = rows.map((row: any) => row.userId);
 }
 
 const batchDelete = () => {
-  if (selectionQuery.ids[0] == null) {
+  if (selectionQuery.ids[0]==null) {
     ElMessage.warning("未选中删除用户目标")
     return;
   }
   ElMessageBox.confirm(
-      '确定要删除该用户吗?',
+      '确定要删除这些用户吗?',
       'Warning',
   )
       .then(async () => {
@@ -369,7 +367,8 @@ const batchDelete = () => {
             type: 'success',
             message: '批量删除用户成功'
           })
-          await getOriginInfo()
+          await getUserData()
+          selectionQuery.ids=[]
         } else {
           ElMessage.error(result.message)
         }

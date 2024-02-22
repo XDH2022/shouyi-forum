@@ -194,6 +194,7 @@ const handleDelete = (index: number, row: any) => {
             message: '删除公告成功'
           })
           await getOriginInfo()
+          deleteQuery.ids=[]
         } else {
           ElMessage({
             type: 'error',
@@ -230,9 +231,7 @@ const selectionQuery = reactive<any>({
     }
 )
 const handleSelectionChange = (rows?: any) => {
-  rows.forEach((row: any) => {
-    selectionQuery.ids.push(row.id)
-  })
+  selectionQuery.ids = rows.map((row: any) => row.id);
 }
 
 const batchDelete = () => {
@@ -252,6 +251,7 @@ const batchDelete = () => {
             message: '批量删除公告成功'
           })
           await getOriginInfo()
+          selectionQuery.ids=[]
         } else {
           ElMessage({
             type: 'error',

@@ -137,6 +137,7 @@ const delete2Tag = async () => {
     ElMessage.success('删除标签成功！')
     deleteDialogVisible.value = false
     await getTagData()
+    deleteInfo.ids=[]
   } else {
     ElMessage.error(result.message)
     deleteDialogVisible.value = false
