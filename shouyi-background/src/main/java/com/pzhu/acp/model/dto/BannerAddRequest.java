@@ -2,6 +2,7 @@ package com.pzhu.acp.model.dto;
 
 import lombok.Data;
 
+import javax.validation.constraints.Size;
 import java.io.Serializable;
 
 @Data
