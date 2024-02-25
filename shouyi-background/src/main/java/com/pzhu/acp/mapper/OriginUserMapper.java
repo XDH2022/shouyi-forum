@@ -27,6 +27,8 @@ public interface OriginUserMapper extends BaseMapper<OriginUser> {
     @Delete("DELETE FROM origin_user WHERE uid = #{uid} AND oid = #{oid}")
     void deleteOriginUser(@Param("oid") Long oid,@Param("uid") Long uid );
 
+    @Select("SELECT oid FROM origin_user WHERE is_delete = 0")
+    List<Long> selectOidListByNotDeleted(@Param("OidList") List<Long> oidlist);
 }
 
 

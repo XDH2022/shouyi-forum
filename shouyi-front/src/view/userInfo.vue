@@ -114,7 +114,7 @@
           </el-card>
         </el-col>
       </el-row>
-      <el-col :span="12" :style="{marginTop: '-70px', marginBottom: '20px' ,marginLeft: '7px'}">
+      <el-col :span="12" :style="{marginTop: '-70px', marginBottom: '20px' ,marginLeft: 'auto'}">
         <el-card shadow="hover">
           <template #header>
             <div class="clearfix">
@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts" name="user">
-import {onMounted, reactive, ref} from 'vue';
+import {onMounted, reactive, ref,nextTick} from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import {updateUser, updateUserPassword} from "../api/user";
@@ -322,7 +322,7 @@ const quitOriginUser = async (origin: any) => {
   const result = await quitOrigin(quitOriginReq);
   if (result.code == 0) {
     ElMessage.success('退出组织成功！');
-    getOriginData(); // 刷新已加入组织列表
+    await getOriginData(); // 刷新已加入组织列表
   }  else {
     ElMessage.error(result.message);
   }
@@ -395,10 +395,13 @@ const setImage = async (info: any) => {
   const formData = new FormData();
   formData.append('file', file);
   const result = await uploadOssImg(formData)
+
   if (result.code == 0) {
-    updateUserReq.user.avatar = result.data
-    ElMessage.success('上传头像成功')
-  } else {
+    updateUserReq.user.avatar = result.data;
+      // 显示一个成功的消息
+      ElMessage.success("上传头像成功");
+    }
+   else {
     ElMessage.error(result.message)
   }
 }
@@ -443,6 +446,7 @@ const cropImage = () => {
   width: 698px;
 }
 .origin-card {
+  margin-right:auto;
   margin-bottom: 10px;
 }
 .pagination{

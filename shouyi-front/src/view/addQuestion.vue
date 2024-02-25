@@ -90,10 +90,13 @@ const saveEdit = async () => {
 
 <style scoped>
 .discuss-info {
+  display: flex;
+  justify-content: center;
   margin-top: 30px;
   background: white;
   border-radius: 4px;
   height: 100%;
+  margin-right: 600px; /* 调整偏移量 */
 }
 
 .el-form {

@@ -119,6 +119,7 @@ const collegeValues = async () => {
   }
 }
 
+const tree = ref<ElTree | null>(null);
 /**
  * 关键字过滤
  */
@@ -132,7 +133,7 @@ const filterNode = (value: string, data: Tree) => {
   return data.name.includes(value)
 }
 /**
- * 添加地区
+ * 添加
  */
 const dialogVisible = ref<boolean>(false)
 const addCollegeInfo = reactive<College>({})

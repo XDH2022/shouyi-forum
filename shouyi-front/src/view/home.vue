@@ -189,7 +189,7 @@
           <div class="box-card">
             <div style="font-size: 16px"> 🎅🏽 关于本站</div>
             <br/>
-            <div style="color:#00000073">一个充满着青春气息，活力满满的校友交流平台</div>
+            <div style="color:#00000073">一个充满着青春气息，活力满满的校园交流平台</div>
             <br>
             <div style="color:#00000073">这里是你的校友之家，无论你毕业多久，无论你身在何处，你都可以在这里找到你的同窗好友，分享你的学习和生活经历，参与各种有趣的活动，获取最新的校园资讯，为母校代言，为校友服务。</div>
             <br>
@@ -436,6 +436,7 @@ const addDynamicUp = _.throttle(async (item: any) => {
 }
 
 .search-btn {
+
   display: flex;
   justify-content: center;
   align-items: center;

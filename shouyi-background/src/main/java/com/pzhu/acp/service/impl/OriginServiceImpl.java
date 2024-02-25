@@ -205,11 +205,11 @@ public class OriginServiceImpl extends ServiceImpl<OriginMapper, Origin>
     @Override
     public Map<String, Object> GetOriginByUser(GetOriginQuery getOriginQuery) {
         List<Long> oidList = originUserMapper.findOidListByUid(getOriginQuery.getUid());
-
+        List<Long> filteredOidList = originUserMapper.selectOidListByNotDeleted(oidList);
         // 分页处理
         int start = (getOriginQuery.getPageNum() - 1) * getOriginQuery.getPageSize();
-        int end = Math.min(start + getOriginQuery.getPageSize(), oidList.size());
-        List<Long> pagedOidList = oidList.subList(start, end);
+        int end = Math.min(start + getOriginQuery.getPageSize(), filteredOidList.size());
+        List<Long> pagedOidList = filteredOidList.subList(start, end);
 
         List<OriginVO> originVOList = new ArrayList<>();
         for (Long oid : pagedOidList) {
@@ -231,7 +231,6 @@ public class OriginServiceImpl extends ServiceImpl<OriginMapper, Origin>
                 QueryWrapper<User> userQueryWrapper = new QueryWrapper<>();
                 userQueryWrapper.eq("id", origin.getUid());
                 User user = userMapper.selectOne(userQueryWrapper);
-
                 originVOList.add(OriginAssembler.toOriginVO(origin, college.getName(), user.getUsername()));
             }
         }
@@ -239,9 +238,9 @@ public class OriginServiceImpl extends ServiceImpl<OriginMapper, Origin>
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("items", originVOList);
         resultMap.put("current", getOriginQuery.getPageNum());
-        resultMap.put("pages", (int) Math.ceil((double) oidList.size() / getOriginQuery.getPageSize()));
+        resultMap.put("pages", (int) Math.ceil((double) filteredOidList.size() / getOriginQuery.getPageSize()));
         resultMap.put("size", getOriginQuery.getPageSize());
-        resultMap.put("total", oidList.size());
+        resultMap.put("total", filteredOidList.size());
 
         return resultMap;
     }
