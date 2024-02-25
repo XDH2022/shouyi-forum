@@ -233,7 +233,7 @@
 </template>
 
 <script setup lang="ts" name="user">
-import {onMounted, reactive, ref,nextTick} from 'vue';
+import {onMounted, reactive, ref, nextTick, h} from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import {updateUser, updateUserPassword} from "../api/user";
@@ -245,6 +245,7 @@ import {House, Monitor, Plus, RemoveFilled, Search} from "@element-plus/icons-vu
 import CollegeSelect from "../components/collegeSelect.vue";
 import {getOriginInfo,getOriginByUser} from "../api/origin";
 import {addOriginUserInfo, getOriginUserInfo, quitOrigin} from "../api/originUser";
+
 
 const userStore = useUserStore()
 userStore.getUserInfo()
@@ -398,16 +399,68 @@ const setImage = async (info: any) => {
 
   if (result.code == 0) {
     updateUserReq.user.avatar = result.data;
+    console.log(result.data)
       // 显示一个成功的消息
       ElMessage.success("上传头像成功");
+
     }
    else {
     ElMessage.error(result.message)
   }
 }
-const saveAvatar = (id: number, email: string) => {
-  updateOnSubmit(id, email)
+// 用 import 导入 blob-util 模块
+import { dataURLToBlob } from 'blob-util';
+
+// 定义一个函数，将 dataURL 转换为 Blob 对象
+function dataURLtoBlob(dataUrl) {
+  // 将 dataUrl 分割成两部分
+  let arr = dataUrl.split(',');
+  // 获取媒体类型
+  let mime = arr[0].match(/:(.*?);/)[1];
+  // 获取 base64 编码的数据
+  let bstr = atob(arr[1]);
+  // 创建一个 Uint8Array 对象
+  let n = bstr.length;
+  let u8arr = new Uint8Array(n);
+  // 将 base64 编码的数据解码成 Uint8Array 对象
+  while (n--) {
+    u8arr[n] = bstr.charCodeAt(n);
+  }
+  // 将 Uint8Array 对象转换成 Blob 对象
+  let blob = new Blob([u8arr], {type: mime});
+  // 返回 Blob 对象
+  return blob;
 }
+const saveAvatar = async (id: number, email: string) => {
+  if (cropImg.value) {
+    let blob = dataURLtoBlob(cropImg.value);
+    const formData = new FormData();
+    // 这里假定cropImg.value是一个base64编码的图像数据，我们需要将其转换成Blob对象
+    formData.append('file', blob);
+    try {
+      const result = await uploadOssImg(formData); // 替换为您上传裁剪图像的API调用
+      if (result.code == 0) {
+        ElMessage.success("头像更新成功");
+        // 在用户存储或必要的地方更新用户的头像
+        updateUserReq.user.avatar = result.data
+        await updateOnSubmit(id,result.data)
+      } else {
+        ElMessage.error(result.message);
+      }
+    } catch (error) {
+      ElMessage.error("上传失败");
+      console.error(error);
+    }
+  } else {
+    ElMessage.warning("请先裁剪图片");
+  }
+};
+const cropImg = ref('');
+const cropper: any = ref();
+const cropImage = () => {
+  cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
+};
+
 const options = [
   {
     value: 1,
@@ -431,11 +484,6 @@ const sexOptions = [
 ]
 
 
-const cropImg = ref('');
-const cropper: any = ref();
-const cropImage = () => {
-  cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
-};
 </script>
 
 <style scoped>
