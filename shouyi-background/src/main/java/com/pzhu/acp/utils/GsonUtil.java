@@ -1,6 +1,7 @@
 package com.pzhu.acp.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.apache.poi.ss.formula.functions.T;
 
 import java.util.Arrays;
@@ -12,8 +13,7 @@ import java.util.List;
  * @Description:
  */
 public class GsonUtil {
-    private static final Gson gson = new Gson();
-
+    private static final Gson gson = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().create();;
     /**
      * 转为json对象
      *

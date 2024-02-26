@@ -9,6 +9,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.google.gson.annotations.Expose;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -49,7 +50,10 @@ public class User implements Serializable {
     /**
      * 密码
      */
+    @Expose(serialize = false)
     private String passsword;
+
+
 
     /**
      * 用户邮箱

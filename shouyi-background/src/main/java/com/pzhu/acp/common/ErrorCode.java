@@ -19,7 +19,7 @@ public enum ErrorCode {
     EXISTED_DISCUSS(50070, "该条讨论不存在", ""),
     MORE_ORIGIN_PEOPLE_NUM(50080, "超过组织人数的最大值", ""),
     REDIS_DATA_IS_NULL(50090, "缓存中数据为null", ""),
-    NO_EXISTED_USER(50100, "该用户不存在", ""),
+    NO_EXISTED_USER(50100, "该用户不存在或邮箱密码不正确", ""),
     ERROR_ENUM_PARAM(50200, "错误的枚举类型", ""),
     NO_EXISTED_TAG(50300, "该标签不存在", ""),
     ANSWER_QUESTION_EXISTED(50400, "该用户已回答了该问题", ""),

@@ -377,9 +377,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
     @Override
     public String userAdminLogin(User user) {
         //验证邮箱正确性
-        String validPattern = "\\\\w[-\\\\w.+]*@([A-Za-z0-9][-A-Za-z0-9]+\\\\.)+[A-Za-z]{2,14}";
+        String validPattern = "[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}";
         Matcher matcher = Pattern.compile(validPattern).matcher(user.getEmail());
-        if (matcher.find()) {
+        if (!matcher.matches()) {
             log.warn("邮箱格式不正确，该邮箱为：{}", user.getEmail());
             throw new BusinessException(ErrorCode.ERROR_EMAIL);
         }
@@ -410,19 +410,24 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 4. 从Redis中读取角色权限表的数据
         String rolePermissionsJson = (String) redisTemplate.opsForValue().get("ROLE_PERMISSIONS:" + dataUser.getId());
+        List<RolePermission> rolePermissions = null;
         if (rolePermissionsJson != null) {
-            List<RolePermission> rolePermissions = GsonUtil.fromJsonList(rolePermissionsJson, RolePermission[].class);
+            rolePermissions = GsonUtil.fromJsonList(rolePermissionsJson, RolePermission[].class);
         }
         else {
             // 如果Redis中没有数据，则从数据库中读取并写入Redis
-            List<RolePermission> rolePermissions = rolePermissionMapper.selectList(new QueryWrapper<RolePermission>().eq("role_id", dataUser.getId()));
+            rolePermissions = rolePermissionMapper.selectList(new QueryWrapper<RolePermission>().eq("role_id", dataUser.getId()));
             if (rolePermissions != null && !rolePermissions.isEmpty()) {
                 rolePermissionsJson = GsonUtil.toJson(rolePermissions);
                 redisTemplate.opsForValue().set("ROLE_PERMISSIONS:" + dataUser.getId(), rolePermissionsJson, 5, TimeUnit.MINUTES);
+            } else {
+                log.warn("No role permissions found for user: {}", GsonUtil.toJson(safetyUser));
+                throw new BusinessException(ErrorCode.NULL_ERROR);
             }
         }
         return StpUtil.getTokenInfo().tokenValue;
     }
+
 
     @Override
     public Boolean updateUserPassword(UserUpdatePasswordQuery userUpdatePasswordQuery) {
