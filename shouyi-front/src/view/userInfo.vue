@@ -211,6 +211,7 @@
     <el-dialog title="裁剪图片" v-model="dialogVisible" width="600px">
       <vue-cropper
           ref="cropper"
+          :key="cropperKey"
           :src="updateUserReq.user.avatar"
           :ready="cropImage"
           :zoom="cropImage"
@@ -397,17 +398,19 @@ const setImage = async (info: any) => {
   formData.append('file', file);
   const result = await uploadOssImg(formData)
 
-  if (result.code == 0) {
-    updateUserReq.user.avatar = result.data;
-    console.log(result.data)
-      // 显示一个成功的消息
-      ElMessage.success("上传头像成功");
 
-    }
+  if (result.code == 0) {
+    updateUserReq.user.avatar=result.data
+    console.log( updateUserReq.user.avatar);
+    ElMessage.success("上传头像成功");
+    cropperKey.value = Date.now();
+  }
    else {
     ElMessage.error(result.message)
   }
 }
+
+const cropperKey = ref(Date.now());
 // 用 import 导入 blob-util 模块
 import { dataURLToBlob } from 'blob-util';
 
@@ -431,7 +434,7 @@ function dataURLtoBlob(dataUrl) {
   // 返回 Blob 对象
   return blob;
 }
-const saveAvatar = async (id: number, email: string) => {
+const saveAvatar = async (id: number) => {
   if (cropImg.value) {
     let blob = dataURLtoBlob(cropImg.value);
     const formData = new FormData();
@@ -443,7 +446,7 @@ const saveAvatar = async (id: number, email: string) => {
         ElMessage.success("头像更新成功");
         // 在用户存储或必要的地方更新用户的头像
         updateUserReq.user.avatar = result.data
-        await updateOnSubmit(id,result.data)
+        await updateOnSubmit(id,userStore.currentUser.email)
       } else {
         ElMessage.error(result.message);
       }
@@ -458,8 +461,13 @@ const saveAvatar = async (id: number, email: string) => {
 const cropImg = ref('');
 const cropper: any = ref();
 const cropImage = () => {
-  cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
+  if (cropper.value && cropper.value.getCroppedCanvas()) {
+    cropImg.value = cropper.value.getCroppedCanvas().toDataURL();
+  } else {
+    console.error('裁剪框还没有准备好');
+  }
 };
+
 
 const options = [
   {
