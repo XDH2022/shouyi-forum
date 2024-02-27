@@ -108,7 +108,7 @@
             <el-form-item label="生日">
               <el-date-picker
                   v-model="updateUserReq.userInfo.birthday"
-                  type="datetime"
+                  type="Date"
                   :placeholder="userStore.currentUser.userInfo.birthday"
               />
             </el-form-item>
