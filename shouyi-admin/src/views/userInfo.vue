@@ -109,7 +109,7 @@
               <el-date-picker
                   v-model="updateUserReq.userInfo.birthday"
                   type="Date"
-                  :placeholder="userStore.currentUser.userInfo.birthday"
+                  :placeholder="formatDate(userStore?.currentUser.userInfo.birthday)"
               />
             </el-form-item>
             <el-form-item label="电话">
@@ -195,7 +195,7 @@ import {reactive, ref} from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
 import {useUserStore} from "../store/user";
-import {updateUser, updateUserPassword} from "../api/user";
+import {getUserInfo, updateUser, updateUserPassword} from "../api/user";
 import {ElMessage, UploadUserFile} from "element-plus";
 import {useRouter} from "vue-router";
 import {uploadOssImg} from "../api/oss";
@@ -243,14 +243,21 @@ const onSubmit = async (id: number) => {
   }
 };
 
+function formatDate(dateString: string): string {
+  if (!dateString) return '';
+  let date = new Date(dateString);
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+}
 const updateOnSubmit = async (id: number, email: string) => {
   updateUserReq.user.id = id
   updateUserReq.userInfo.id = id
   updateUserReq.user.email = email
   updateUserReq.userInfo.email = email
+  updateUserReq.userInfo.birthday = formatDate(updateUserReq.userInfo.birthday)
   const result = await updateUser(updateUserReq)
   if (result.code == 0) {
     ElMessage.success('更新用户信息成功')
+    await userStore.getUserInfo()
     location.reload()
   } else {
     ElMessage.error(result.message)
