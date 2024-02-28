@@ -38,6 +38,13 @@ export const addRoleToPermission = (data: any) => {
         data: data
     });
 };
+export const deleteRoleToPermission = (data: any) => {
+    return request({
+        url: '/permission/deletePermissionToRole',
+        method: 'delete',
+        data: data
+    });
+};
 
 export const showRoleToPermission = (data: any) => {
     return request({

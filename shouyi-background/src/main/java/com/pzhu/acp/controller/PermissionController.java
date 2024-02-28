@@ -4,12 +4,11 @@ import com.pzhu.acp.common.BaseResponse;
 import com.pzhu.acp.common.ErrorCode;
 import com.pzhu.acp.common.ResultUtils;
 import com.pzhu.acp.constant.CommonConstant;
-import com.pzhu.acp.model.dto.PermissionAddRequest;
-import com.pzhu.acp.model.dto.PermissionAddToRoleRequest;
-import com.pzhu.acp.model.dto.PermissionDeleteRequest;
-import com.pzhu.acp.model.dto.PermissionUpdateRequest;
+import com.pzhu.acp.model.dto.*;
 import com.pzhu.acp.model.entity.Permission;
+import com.pzhu.acp.model.entity.RolePermission;
 import com.pzhu.acp.model.query.PermissionAddToRoleQuery;
+import com.pzhu.acp.model.query.PermissionDeleteToRoleQuery;
 import com.pzhu.acp.service.PermissionService;
 import com.pzhu.acp.utils.GsonUtil;
 import com.pzhu.acp.exception.BusinessException;
@@ -96,13 +95,28 @@ public class PermissionController {
             log.error("参数校验失败，该参数为：{}", GsonUtil.toJson(permissionAddToRoleRequest));
             throw new BusinessException(ErrorCode.PARAMS_ERROR);
         }
-        if (CollectionUtils.isEmpty(permissionAddToRoleRequest.getPermissionId())) {
-            log.error("参数校验失败，该参数为：{}", GsonUtil.toJson(permissionAddToRoleRequest));
-            throw new BusinessException(ErrorCode.PARAMS_ERROR);
-        }
+//        if (CollectionUtils.isEmpty(permissionAddToRoleRequest.getPermissionId())) {
+//            log.error("参数校验失败，该参数为：{}", GsonUtil.toJson(permissionAddToRoleRequest));
+//            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+//        }
         PermissionAddToRoleQuery permissionAddToRoleQuery = new PermissionAddToRoleQuery();
         BeanUtils.copyProperties(permissionAddToRoleRequest, permissionAddToRoleQuery);
         permissionService.addPermissionToRole(permissionAddToRoleQuery);
+        return ResultUtils.success(Boolean.TRUE);
+    }
+    @DeleteMapping("/deletePermissionToRole")
+    public BaseResponse<Boolean> deletePermissionToRole(@RequestBody PermissionDeleteToRoleRequest permissionDeleteToRoleRequest) {
+        if (permissionDeleteToRoleRequest.getRoleId() < CommonConstant.MIN_ID) {
+            log.error("参数校验失败，该参数为：{}", GsonUtil.toJson(permissionDeleteToRoleRequest));
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        if (CollectionUtils.isEmpty(permissionDeleteToRoleRequest.getPermissionId())) {
+            log.error("参数校验失败，该参数为：{}", GsonUtil.toJson(permissionDeleteToRoleRequest));
+            throw new BusinessException(ErrorCode.PARAMS_ERROR);
+        }
+        PermissionDeleteToRoleQuery permissionDeleteToRoleQuery = new PermissionDeleteToRoleQuery();
+        BeanUtils.copyProperties(permissionDeleteToRoleRequest, permissionDeleteToRoleQuery);
+        permissionService.deletePermissionToRole( permissionDeleteToRoleQuery);
         return ResultUtils.success(Boolean.TRUE);
     }
 

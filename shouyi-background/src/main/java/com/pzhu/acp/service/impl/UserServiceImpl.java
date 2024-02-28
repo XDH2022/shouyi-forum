@@ -410,19 +410,15 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 4. 从Redis中读取角色权限表的数据
         String rolePermissionsJson = (String) redisTemplate.opsForValue().get("ROLE_PERMISSIONS:" + dataUser.getId());
-        List<RolePermission> rolePermissions = null;
         if (rolePermissionsJson != null) {
-            rolePermissions = GsonUtil.fromJsonList(rolePermissionsJson, RolePermission[].class);
+            List<RolePermission> rolePermissions = GsonUtil.fromJsonList(rolePermissionsJson, RolePermission[].class);
         }
         else {
             // 如果Redis中没有数据，则从数据库中读取并写入Redis
-            rolePermissions = rolePermissionMapper.selectList(new QueryWrapper<RolePermission>().eq("role_id", dataUser.getId()));
+            List<RolePermission> rolePermissions = rolePermissionMapper.selectList(new QueryWrapper<RolePermission>().eq("role_id", dataUser.getId()));
             if (rolePermissions != null && !rolePermissions.isEmpty()) {
                 rolePermissionsJson = GsonUtil.toJson(rolePermissions);
                 redisTemplate.opsForValue().set("ROLE_PERMISSIONS:" + dataUser.getId(), rolePermissionsJson, 5, TimeUnit.MINUTES);
-            } else {
-                log.warn("No role permissions found for user: {}", GsonUtil.toJson(safetyUser));
-                throw new BusinessException(ErrorCode.NULL_ERROR);
             }
         }
         return StpUtil.getTokenInfo().tokenValue;

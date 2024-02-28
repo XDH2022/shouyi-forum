@@ -114,7 +114,7 @@ import UserInfo from "../model/UserInfo";
 import {deleteUserInfo, getUserInfo, updateUserInfo} from "../api/user";
 import RegionSelect from "../components/regionSelect.vue";
 import {addRoleInfo, deleteRoleInfo, getRoleInfo, updateRoleInfo} from "../api/role";
-import {addRoleToPermission, getPermissionInfo, showRoleToPermission} from "../api/permission";
+import {addRoleToPermission, deleteRoleToPermission, getPermissionInfo, showRoleToPermission} from "../api/permission";
 import {Tree} from "element-plus/es/components/tree-v2/src/types";
 
 const query = reactive({
@@ -186,6 +186,8 @@ const addPermissionVisible = ref<boolean>(false)
 const handleAddPermission = (index: any, row: any) => {
   addPermissionVisible.value = true
   addRoleToPermissionReq.roleId = row.id
+  addPermissionVisible.value = true
+  deleteRoleToPermissionReq.roleId = row.id
   showPermissionInfo()
   showRolePermission()
 }
@@ -203,17 +205,35 @@ const addRoleToPermissionReq = reactive<any>({
   roleId: null,
   permissionId: null
 })
+const deleteRoleToPermissionReq = reactive<any>({
+  roleId: null,
+  permissionId: null
+})
 const savePermissionRole = async () => {
-  addRoleToPermissionReq.permissionId = tree.value!.getCheckedKeys(false)
-  const result = await addRoleToPermission(addRoleToPermissionReq)
+  const newCheckedKeys = tree.value!.getCheckedKeys(false);
+  const oldCheckedKeys = addRoleToPermissionReq.permissionId;
+  addRoleToPermissionReq.permissionId = newCheckedKeys;
+
+// 找出被取消勾选的菜单
+  const uncheckedKeys = oldCheckedKeys.filter(key => !newCheckedKeys.includes(key) || (newCheckedKeys.length === 1 && !newCheckedKeys.includes(key)));
+  // 删除被取消勾选的菜单
+  for (const key of uncheckedKeys) {
+    deleteRoleToPermissionReq.permissionId = key;
+    await deleteRoleToPermission(deleteRoleToPermissionReq);
+  }
+
+  const result = await addRoleToPermission(addRoleToPermissionReq);
   if (result.code == 0) {
-    ElMessage.success('添加角色权限成功')
-    addPermissionVisible.value = false
+    ElMessage.success('修改角色权限成功');
+    addPermissionVisible.value = false;
   } else {
-    ElMessage.error(result.message)
-    addPermissionVisible.value = false
+    ElMessage.error(result.message);
+    addPermissionVisible.value = false;
   }
 }
+
+
+
 const defaultCheckKey = ref<number[]>([])
 const showRolePermission = async () => {
   defaultCheckKey.value = []

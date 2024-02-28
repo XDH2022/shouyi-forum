@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.extension.service.IService;
 import com.pzhu.acp.model.entity.Permission;
 import com.pzhu.acp.model.entity.RolePermission;
 import com.pzhu.acp.model.query.PermissionAddToRoleQuery;
+import com.pzhu.acp.model.query.PermissionDeleteToRoleQuery;
 import com.pzhu.acp.model.vo.PermissionVO;
 import com.pzhu.acp.model.vo.RolePermissionVO;
 
@@ -29,4 +30,6 @@ public interface PermissionService extends IService<Permission> {
     Boolean updatePermissionToRole(RolePermission permissionUpdateToRoleRequest);
 
     RolePermissionVO getRolePermissionInRoleId(Long roleId);
+
+    Boolean deletePermissionToRole(PermissionDeleteToRoleQuery permissionDeleteToRoleQuery);
 }

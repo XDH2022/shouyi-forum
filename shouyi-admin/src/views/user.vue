@@ -144,7 +144,7 @@
       </el-form>
       <template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
+					<el-button @click="selectRoleVisible">取 消</el-button>
 					<el-button type="primary" @click="saveEdit">确 定</el-button>
 				</span>
       </template>
@@ -417,7 +417,11 @@ const doAddUserRole = async () => {
   if (result.code == 0) {
     ElMessage.success('分配角色成功')
     selectRoleVisible.value = false
-  } else {
+  } else if(result.code == 50000){
+    ElMessage.warning('分配角色为空')
+    selectRoleVisible.value = false
+  }
+  else{
     ElMessage.error(result.message)
     selectRoleVisible.value = false
   }

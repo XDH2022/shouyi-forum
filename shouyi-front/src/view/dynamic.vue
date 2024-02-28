@@ -25,6 +25,7 @@
                   <h5>动态</h5>
                 </a>
                 <v-md-preview :text="discussInfo.content"></v-md-preview>
+                <el-tag type="success" round>{{ discussInfo.tagName }}</el-tag>
                 <div style="margin-top: 12px;">
                   <span style="color: #00000073;">{{ discussInfo.createTime }}</span>
                   <el-divider direction="vertical"/>
@@ -40,7 +41,16 @@
           </el-card>
         </div>
       </el-col>
+      <el-col :span="4">
+        <el-card>
+          <template #header>
+            <span style="color: rgba(0,0,0,.85);font-weight: 500;font-size: 16px;">帖子信息</span>
+          </template>
+          <span>标签：</span>
+          <el-tag type="success">{{ discussInfo?.tagName }}</el-tag>
+        </el-card>
 
+      </el-col>
     </el-row>
   </div>
 </template>

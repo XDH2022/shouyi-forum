@@ -2,7 +2,10 @@ package com.pzhu.acp.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.pzhu.acp.common.BaseResponse;
 import com.pzhu.acp.common.ErrorCode;
+import com.pzhu.acp.common.ResultUtils;
+import com.pzhu.acp.constant.CommonConstant;
 import com.pzhu.acp.mapper.PermissionMapper;
 import com.pzhu.acp.mapper.RoleMapper;
 import com.pzhu.acp.mapper.RolePermissionMapper;
@@ -10,6 +13,7 @@ import com.pzhu.acp.model.entity.Permission;
 import com.pzhu.acp.model.entity.Role;
 import com.pzhu.acp.model.entity.RolePermission;
 import com.pzhu.acp.model.query.PermissionAddToRoleQuery;
+import com.pzhu.acp.model.query.PermissionDeleteToRoleQuery;
 import com.pzhu.acp.service.PermissionService;
 import com.pzhu.acp.utils.GsonUtil;
 import com.google.common.collect.Lists;
@@ -20,6 +24,9 @@ import com.pzhu.acp.model.vo.RolePermissionVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
@@ -150,6 +157,33 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 });
         return Boolean.TRUE;
     }
+    @Override
+    public Boolean deletePermissionToRole(PermissionDeleteToRoleQuery permissionDeleteToRoleQuery) {
+        QueryWrapper<RolePermission> rolePermissionQueryWrapper = new QueryWrapper<>();
+        rolePermissionQueryWrapper.eq("role_id", permissionDeleteToRoleQuery.getRoleId());
+        List<RolePermission> rolePermissions = rolePermissionMapper.selectList(rolePermissionQueryWrapper);
+        List<Long> existingPermissionId = rolePermissions.stream()
+                .map(RolePermission::getPermissionId).collect(Collectors.toList());
+        permissionDeleteToRoleQuery.getPermissionId().stream()
+                .filter(existingPermissionId::contains)
+                .forEach(item -> {
+                    RolePermission rolePermission = new RolePermission();
+                    rolePermission.setRoleId(permissionDeleteToRoleQuery.getRoleId());
+                    rolePermission.setPermissionId(item);
+                    checkPermissionExisted(rolePermission);
+                    checkRoleExisted(rolePermission);
+                    QueryWrapper<RolePermission> rolePermissionQueryWrapper1 = new QueryWrapper<>();
+                    rolePermissionQueryWrapper1.eq("role_id", rolePermission.getRoleId());
+                    rolePermissionQueryWrapper1.eq("permission_id", item);
+                    int operationNum = rolePermissionMapper.delete(rolePermissionQueryWrapper1);
+                    if (operationNum == OperationConstant.OPERATION_NUM) {
+                        log.warn("删除角色对应权限列表失败,该问题参数为:{}", GsonUtil.toJson(rolePermission));
+                        throw new BusinessException(ErrorCode.SAVE_ERROR);
+                    }
+                });
+        return Boolean.TRUE;
+    }
+
 
     private void checkRoleExisted(RolePermission permissionAddToRoleRequest) {
         QueryWrapper<Role> roleQueryWrapper = new QueryWrapper<>();
@@ -236,6 +270,8 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
         }
         return permissionVO;
     }
+
+
 }
 
 
