@@ -175,8 +175,8 @@
             <el-form-item label="生日">
               <el-date-picker
                   v-model="updateUserReq.userInfo.birthday"
-                  type="datetime"
-                  :placeholder="userStore?.currentUser.userInfo.birthday"
+                  type="Date"
+                  :placeholder="formatDate(userStore?.currentUser.userInfo.birthday)"
               />
             </el-form-item>
             <el-form-item label="电话">
@@ -234,10 +234,10 @@
 </template>
 
 <script setup lang="ts" name="user">
-import {onMounted, reactive, ref, nextTick, h} from 'vue';
+import {onMounted, reactive, ref,} from 'vue';
 import VueCropper from 'vue-cropperjs';
 import 'cropperjs/dist/cropper.css';
-import {updateUser, updateUserPassword} from "../api/user";
+import {getCurrentInfo, updateUser, updateUserPassword} from "../api/user";
 import {ElMessage, UploadUserFile} from "element-plus";
 import {useRouter} from "vue-router";
 import {uploadOssImg} from "../api/oss";
@@ -250,6 +250,7 @@ import {addOriginUserInfo, getOriginUserInfo, quitOrigin} from "../api/originUse
 
 const userStore = useUserStore()
 userStore.getUserInfo()
+
 
 const form = reactive<any>({
   id: null,
@@ -278,6 +279,7 @@ const updateUserReq = reactive<any>({
     address: null
   }
 })
+
 onMounted(() => {
   getOriginData()
 })
@@ -367,15 +369,22 @@ const onSubmit = async (id: number) => {
     ElMessage.error(result.message)
   }
 };
-
+function formatDate(dateString: string): string {
+  if (!dateString) return '';
+  let date = new Date(dateString);
+  return new Date(date.getTime() - (date.getTimezoneOffset() * 60000)).toISOString().split('T')[0];
+}
 const updateOnSubmit = async (id: number, email: string) => {
   updateUserReq.user.id = id
   updateUserReq.userInfo.id = id
   updateUserReq.user.email = email
   updateUserReq.userInfo.email = email
+  updateUserReq.userInfo.birthday = formatDate(updateUserReq.userInfo.birthday)
   const result = await updateUser(updateUserReq)
   if (result.code == 0) {
+
     ElMessage.success('更新用户信息成功')
+    await userStore.getUserInfo()
     location.reload()
   } else {
     ElMessage.error(result.message)
@@ -413,6 +422,9 @@ const setImage = async (info: any) => {
 const cropperKey = ref(Date.now());
 // 用 import 导入 blob-util 模块
 import { dataURLToBlob } from 'blob-util';
+import userInfo from "./userInfo.vue";
+import _default from "ant-design-vue/lib/color-picker";
+import format = _default.props.format;
 
 // 定义一个函数，将 dataURL 转换为 Blob 对象
 function dataURLtoBlob(dataUrl) {

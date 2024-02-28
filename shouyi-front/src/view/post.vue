@@ -295,7 +295,7 @@ const DoDiscussComment = async (id: number) => {
 const addCommentUpReq = reactive<any>({})
 const doCommentUp = _.throttle(async (item: any) => {
   if (userStore.currentUser.userId == null) {
-    ElMessage.warning('登录后才能发布点赞哟！')
+    ElMessage.warning('登录后才能点赞哟！')
     return;
   }
   addCommentUpReq.id = item.id
@@ -317,7 +317,7 @@ const doCommentUp = _.throttle(async (item: any) => {
 const addReplyUpReq = reactive<any>({})
 const doReplyUp = _.throttle(async (item: any) => {
   if (userStore.currentUser.userId == null) {
-    ElMessage.warning('登录后才能发布点赞哟！')
+    ElMessage.warning('登录后才能点赞哟！')
     return;
   }
   addReplyUpReq.id = item.id

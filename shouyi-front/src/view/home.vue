@@ -110,7 +110,6 @@
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;"></v-md-preview>
-              <el-tag type="success" round>{{ item.tagName }}</el-tag>
               <div style="margin-top: 12px;">
                 <span style="color: #00000073;">{{ item.createTime }}</span>
                 <el-divider direction="vertical"/>
@@ -156,7 +155,6 @@
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 -webkit-line-clamp: 2;"></v-md-preview>
-              <el-tag type="success" round>{{ item.tagName }}</el-tag>
               <div style="margin-top: 12px;">
                 <span style="color: #00000073;">{{ item.createTime }}</span>
                 <el-divider direction="vertical"/>
@@ -275,13 +273,7 @@ const getNoticeList = async () => {
   }
 }
 
-const showAllNotice = () => {
-  ElNotification({
-    title: '历史公告',
-    message: '后续上架',
-    type: 'info',
-  })
-}
+
 const getIndexReq = reactive<any>({
   tid: null
 })
