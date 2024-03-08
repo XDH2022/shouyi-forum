@@ -21,14 +21,13 @@ import java.util.List;
 public interface OriginUserMapper extends BaseMapper<OriginUser> {
 
     IPage<OriginUserVO> selectOriginUserVO(Page<OriginUserVO> originUserVOPage, @Param("oid") Long oid);
-    @Select("SELECT oid FROM origin_user WHERE uid = #{uid}")
+    @Select("SELECT oid FROM origin_user WHERE uid = #{uid} AND is_delete = 0")
     List<Long> findOidListByUid(@Param("uid") Long uid);
 
     @Delete("DELETE FROM origin_user WHERE uid = #{uid} AND oid = #{oid}")
     void deleteOriginUser(@Param("oid") Long oid,@Param("uid") Long uid );
 
-    @Select("SELECT oid FROM origin_user WHERE is_delete = 0")
-    List<Long> selectOidListByNotDeleted(@Param("OidList") List<Long> oidlist);
+
 }
 
 
