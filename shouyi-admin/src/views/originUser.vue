@@ -166,20 +166,18 @@ const openAddOriginUser = () => {
   addOriginUser.oid = route.params?.id[0]
   addVisible.value = true
 }
-const addOriginToUser = async ( ) => {
-
+const addOriginToUser = async () => {
   const result = await addOriginUserInfo(addOriginUser);
   if (result.code == 0) {
-    ElMessage.success("添加组织用户成功");
-    addVisible.value = false;
     await showAllOriginUser();
+    ElMessage.success("添加组织用户成功");
+    location.reload();
+    addVisible.value = false;
   } else if (result.code == 50000) {
     ElMessage.warning("请输入用户ID");
-  }
-  else if (result.code == 30000) {
+  } else if (result.code == 30000) {
     ElMessage.warning("该用户不存在或已经在当前组织");
-  }
-  else {
+  } else {
     ElMessage.error(result.message);
   }
   addVisible.value = false;

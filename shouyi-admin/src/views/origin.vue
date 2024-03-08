@@ -306,6 +306,7 @@ const addOriginInfo = async () => {
   if (result.code == 0) {
     ElMessage.success('添加组织成功！')
     addVisible.value = false
+    location.reload() // 刷新页面
     await getOriginInfo()
   } else {
     ElMessage.error(result.message)
