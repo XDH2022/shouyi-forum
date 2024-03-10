@@ -147,7 +147,7 @@ public class OriginServiceImpl extends ServiceImpl<OriginMapper, Origin>
             QueryWrapper<OriginUser> originUserQueryWrapper = new QueryWrapper<>();
             originUserQueryWrapper.eq("oid", id);
             int deleteOperationNum = originUserMapper.delete(originUserQueryWrapper);
-            if (deleteOperationNum <=0) {
+            if (deleteOperationNum <= 0) {
                 log.warn("删除组织用户失败，组织id为：{}", GsonUtil.toJson(id));
                 throw new BusinessException(ErrorCode.DELETE_ERROR);
             }

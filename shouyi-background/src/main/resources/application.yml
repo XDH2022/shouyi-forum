@@ -41,6 +41,7 @@ server:
   port: 9001
   servlet:
     context-path: /api
+  address: 192.168.220.228
 mybatis-plus:
   configuration:
     #在映射实体或者属性时，将数据库中表名和字段名中的下划线去掉，按照驼峰命名法映射 address_book ---> addressBook
@@ -53,7 +54,7 @@ mybatis-plus:
       logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
 
 minio:
-     endpoint: http://127.0.0.1:9000
+     endpoint: http://192.168.220.228:9000
      accessKey: minioadmin
      secretKey: minioadmin
      bucketName: xdh-bucket
