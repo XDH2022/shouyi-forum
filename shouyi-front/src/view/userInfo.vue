@@ -320,16 +320,37 @@ const quitOriginReq = reactive<any>({
   uid: userStore.currentUser?.userId,
   oid: null
 })
-
-const quitOriginUser = async (origin: any) => {
-  quitOriginReq.oid = origin.id
-  const result = await quitOrigin(quitOriginReq);
-  if (result.code == 0) {
-    ElMessage.success('退出组织成功！');
-    await getOriginData(); // 刷新已加入组织列表
-  }  else {
-    ElMessage.error(result.message);
+let isMessageShowing = false;
+const showMessage = (type :any, message:any) => {
+  if (!isMessageShowing) {
+    isMessageShowing = true;
+    ElMessage({
+      message: message,
+      type: type,
+      onClose: () => {
+        isMessageShowing = false;
+      },
+    });
   }
+};
+const quitOriginUser = async (origin: any) => {
+  ElMessageBox.confirm('确定要退出组织吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    quitOriginReq.oid = origin.id
+    const result = await quitOrigin(quitOriginReq);
+    if (result.code == 0) {
+      showMessage('success', '退出组织成功！');
+      await getOriginData(); // 刷新已加入组织列表
+    } else {
+      showMessage('error', result.message);
+    }
+  })
+  .catch(() => {
+    showMessage('info', '已取消退出');
+  });
 }
 
 
@@ -403,6 +424,9 @@ const showDialog = () => {
 };
 const setImage = async (info: any) => {
   const file = info.target.files[0]
+  if (!checkFile(file)) {
+    return;
+  }
   const formData = new FormData();
   formData.append('file', file);
   const result = await uploadOssImg(formData)
@@ -479,7 +503,19 @@ const cropImage = () => {
     console.error('裁剪框还没有准备好');
   }
 };
-
+const checkFile = (file: any) => {
+  const isFileTypeValid = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
+  if (!isFileTypeValid) {
+    showMessage('error', '只支持上传 jpg / png / gif 格式的图片');
+    return false;
+  }
+  const isLt1M = file.size / 1024 / 1024 < 1;
+  if (!isLt1M) {
+    showMessage('error', '图片大小不能超过 1M');
+    return false;
+  }
+  return true;
+}
 
 const options = [
   {

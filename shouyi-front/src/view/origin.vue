@@ -85,8 +85,7 @@
     </el-drawer>
   </div>
   <el-empty v-show="Object.keys(originData).length === 0" :image-size="200"/>
-
-  <el-dialog title="添加组织" v-model="addVisible" width="30%">
+  <el-dialog title="添加组织" v-if="addVisible" v-model="addVisible" width="30%">
     <el-form label-width="70px">
       <el-form-item label="组织名">
         <el-input v-model="addOrigin.name"></el-input>
@@ -135,7 +134,7 @@
     </el-form>
     <template #footer>
 				<span class="dialog-footer">
-					<el-button @click="addVisible = false">取 消</el-button>
+					  <el-button @click="closeAddOrigin">取 消</el-button>
 					<el-button type="primary" @click="addOriginInfo">确 定</el-button>
 				</span>
     </template>
@@ -152,12 +151,28 @@ import {addOriginUserInfo, getOriginUserInfo} from "../api/originUser";
 import {uploadOssImg} from "../api/oss";
 import {useUserStore} from "../stores/user";
 
+let isMessageShowing = false;
+
+const showMessage = (type :any, message:any) => {
+  if (!isMessageShowing) {
+    isMessageShowing = true;
+    ElMessage({
+      message: message,
+      type: type,
+      onClose: () => {
+        isMessageShowing = false;
+      },
+    });
+  }
+};
+
 const userStore = useUserStore()
 userStore.getUserInfo()
 
 onMounted(() => {
   getOriginData()
 })
+
 const getOriginReq = reactive<any>({
   pageNum: 1,
   pageSize: 9,
@@ -165,19 +180,20 @@ const getOriginReq = reactive<any>({
   userName: null,
   originName: null,
 })
+
 const pageTotal = ref(0);
 const originData = ref<any>({})
+
 const getOriginData = async () => {
   const result = await getOriginInfo(getOriginReq)
   if (result.code == 0) {
     originData.value = {...result.data.items}
     pageTotal.value = result.data.total
   } else {
-    ElMessage.error(result.message)
+    showMessage('error', result.message);
   }
 }
 
-// 分页导航
 const handlePageChange = (val: number) => {
   getOriginReq.pageNum = val;
   getOriginData();
@@ -188,33 +204,42 @@ const getCollegeId = (id: number) => {
   addOrigin.cid = id
 }
 
-//加入组织
 const addOriginReq = reactive<any>({
   uid: userStore.currentUser?.userId,
   oid: null
 })
 
 const addOriginUser = async (origin: any) => {
-  if (userStore.currentUser.userId==null){
-    ElMessage.warning('登录后才能加入组织哟！')
-    return;
-  }
-  addOriginReq.oid = origin.id
-  const result = await addOriginUserInfo(addOriginReq);
-  if (result.code == 0) {
-    ElMessage.success('加入组织成功！');
-  } else if (result.code == 30000) {
-    ElMessage.warning('你已经加入了该组织');
-  } else {
-    ElMessage.error(result.message);
-  }
+  ElMessageBox.confirm('确定要加入组织吗？', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  }).then(async () => {
+    if (userStore.currentUser.userId==null){
+      showMessage('warning', '登录后才能加入组织哟！');
+      return;
+    }
+    addOriginReq.oid = origin.id
+    const result = await addOriginUserInfo(addOriginReq);
+    if (result.code == 0) {
+      showMessage('success', '加入组织成功！');
+    } else if (result.code == 30000) {
+      showMessage('warning', '你已经加入了该组织');
+    } else {
+      showMessage('error', result.message);
+    }
+  }).catch(() => {
+    showMessage('info', '已取消加入');
+  });
 }
+
 
 const openOriginUserVisible = ref<boolean>(false)
 const showOriginUser = (origin: any) => {
   openOriginUserVisible.value = true
   getOriginUser(origin.id)
 }
+
 const originUserData = ref<any>({})
 const getOriginUserReq = reactive<any>({
   pageNum: 1,
@@ -223,18 +248,17 @@ const getOriginUserReq = reactive<any>({
   userName: null,
   regionName: null
 })
+
 const getOriginUser = async (id: number) => {
   getOriginUserReq.oid = id
   const result = await getOriginUserInfo(getOriginUserReq)
   if (result.code == 0) {
     originUserData.value = {...result.data.items}
+  } else {
+    showMessage('error', result.message);
   }
 }
 
-
-/**
- * 新增操作
- */
 const addVisible = ref<boolean>(false)
 const addOrigin = reactive<any>({})
 const openAddOrigin = () => {
@@ -243,22 +267,30 @@ const openAddOrigin = () => {
   addOrigin.cid = ''
   addVisible.value = true
 }
-/**
- * 文件上传
- */
+const closeAddOrigin = () => {
+  addOrigin.name = null
+  addOrigin.avatar = null
+  addOrigin.cid = null
+  addVisible.value = false
+  fileList.value.splice(0, fileList.value.length) // 添加这一行
+  console.log(addOrigin, addVisible.value)  // 添加这一行
+}
+
 const checkFile = (file: any) => {
   const isFileTypeValid = ['image/jpeg', 'image/png', 'image/gif'].includes(file.type);
   if (!isFileTypeValid) {
-    ElMessage.error('只支持上传 jpg / png / gif 格式的图片');
+    showMessage('error', '只支持上传 jpg / png / gif 格式的图片');
     return false;
   }
   const isLt1M = file.size / 1024 / 1024 < 1;
   if (!isLt1M) {
-    ElMessage.error('图片大小不能超过 1M');
+    showMessage('error', '图片大小不能超过 1M');
     return false;
   }
   return true;
 }
+
+
 const fileList = ref<UploadUserFile[]>([])
 const upload = async (info: any) => {
   const {file} = info
@@ -268,11 +300,15 @@ const upload = async (info: any) => {
   const result = await uploadOssImg(formData)
   if (result.code == 0) {
     addOrigin.avatar = result.data
+  } else {
+    showMessage('error', result.message);
   }
 }
+
 const uploadSuccess = () => {
-  ElMessage.success('文件上传成功！！')
+  showMessage('success', '文件上传成功！！');
 }
+
 const dialogImageUrl = ref('')
 const dialogVisible = ref(false)
 const disabled = ref(false)
@@ -286,26 +322,28 @@ const handlePictureCardPreview = (file: UploadFile) => {
   dialogVisible.value = true
 }
 
-/**
- *添加组织
- */
+
+
 const addOriginInfo = async () => {
   if (userStore.currentUser.userId==null){
-    ElMessage.warning('登录后才能添加组织哟！')
+    showMessage('warning', '登录后才能添加组织哟！');
     return;
   }
   addOrigin.uid = userStore.currentUser?.userId
   const result = await doOriginInfo(addOrigin)
   if (result.code == 0) {
-    ElMessage.success('添加组织成功！')
+    showMessage('success', '添加组织成功！');
     addVisible.value = false
     await getOriginData()
-  } else {
-    ElMessage.error(result.message)
+  }
+  else {
+    showMessage('error', result.message);
     addVisible.value = false
   }
-}
+};
 </script>
+
+
 
 <style>
 .origin-main {
