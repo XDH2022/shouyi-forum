@@ -54,7 +54,7 @@
             <el-button color="#d5ebe1" :icon="Coordinate" round @click="$router.push('/login')">登录</el-button>
           </div>
         </div>
-        <p class="login-tips">Tips : 欢迎来到校友交流平台！</p>
+        <p class="login-tips">Tips : 欢迎来到校园交流平台！</p>
       </el-form>
     </div>
   </div>

@@ -335,6 +335,7 @@ const addOriginInfo = async () => {
     showMessage('success', '添加组织成功！');
     addVisible.value = false
     await getOriginData()
+    location.reload()
   }
   else {
     showMessage('error', result.message);

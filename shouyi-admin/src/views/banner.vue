@@ -119,7 +119,7 @@
       <el-form-item label="名称">
         <el-input v-model="editNotice.name"/>
       </el-form-item>
-      <el-form-item label="公告内容">
+      <el-form-item label="图片">
         <el-avatar @click="removeAvatar" v-if="editNotice.imageUrl!=''" shape="square" :size="200" :fit="cover"
                    :src="editNotice.imageUrl"/>
         <el-upload

@@ -1,7 +1,7 @@
 <template>
   <div class="login-wrap">
     <div class="ms-login">
-      <div class="ms-title">校友交流后台管理系统</div>
+      <div class="ms-title">校园交流后台管理系统</div>
       <el-form :model="param" :rules="rules" ref="login" label-width="0px" class="ms-content">
         <el-form-item prop="email">
           <el-input v-model="param.email" clearable placeholder="请输入邮箱">
@@ -34,7 +34,7 @@
       </el-form>
     </div>
     <div class="footer">
-      <a title="info" target="_blank" href="http://www.wsyu.edu.cn/">
+      <a title="info" target="_blank" href="http://127.0.0.1:8888">
         <el-popover
             placement="top-start"
             :width="200"
@@ -42,7 +42,7 @@
             content="欢迎来到首义大家庭！！！"
         >
           <template #reference>
-            <span><el-icon><Platform /></el-icon>学校官网</span>
+            <span><el-icon><Platform /></el-icon>系统前台</span>
           </template>
         </el-popover>
       </a>

@@ -103,15 +103,15 @@
             </template>
           </el-popover>
         </a>
-        <a title="info" target="_blank" href="http://www.wsyu.edu.cn/">
+        <a title="info" target="_blank" href="http://127.0.0.1:8889">
           <el-popover
               placement="top-start"
               :width="200"
               trigger="hover"
-              content="欢迎来到首义大家庭！！！"
+              content="点击进入后台"
           >
             <template #reference>
-              <span><el-icon><Platform /></el-icon>学校官网</span>
+              <span><el-icon><Platform /></el-icon>后台系统</span>
             </template>
           </el-popover>
         </a>

@@ -4,8 +4,6 @@ import com.pzhu.acp.constant.RedisConstant;
 import com.pzhu.acp.constant.UserConstant;
 import com.pzhu.acp.utils.GsonUtil;
 import com.pzhu.acp.utils.VerCodeGenerateUtil;
-import org.springframework.amqp.rabbit.annotation.RabbitHandler;
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;

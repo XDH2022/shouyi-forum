@@ -544,15 +544,14 @@ const sexOptions = [
 
 <style scoped>
 .origin-main {
-
-  margin-top: 20px;
-  height: 644px;
-  width: 698px;
+  margin-top: 0.5vh;
+  height: 96vh;
+  width: 101vh;
 }
 .origin-card {
-  margin-right:auto;
-  margin-bottom: 10px;
+  margin-bottom: 1vh;
 }
+
 .pagination{
   margin-top: 80px;
   display: flex;

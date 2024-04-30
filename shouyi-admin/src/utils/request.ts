@@ -2,7 +2,7 @@ import axios, {AxiosInstance, AxiosError, AxiosResponse, AxiosRequestConfig} fro
 
 const service: AxiosInstance = axios.create({
     timeout: 5000,
-    baseURL: 'http://192.168.220.228:9001/api/'
+    baseURL: 'http://127.0.0.1:9001/api/'
 });
 
 service.defaults.withCredentials = true; // 配置为true
