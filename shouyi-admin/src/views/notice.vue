@@ -78,7 +78,7 @@
     </template>
   </el-dialog>
 
-  <el-dialog title="修改公告" v-model="editVisible" width="75%">
+  <el-dialog title="修改公告" v-if="editVisible" v-model="editVisible" width="75%">
     <el-form label-width="70px">
       <el-form-item label="id">
         <el-input v-model="editNotice.id" disabled/>
@@ -96,7 +96,7 @@
   </el-dialog>
 </template>
 <script setup lang="ts">
-import {ref, reactive, onMounted} from 'vue';
+import {ref, reactive, onMounted, nextTick} from 'vue';
 import {ElMessage, ElMessageBox, UploadUserFile} from 'element-plus';
 import Notice from "../model/Notice";
 import {addNoticeInfo, deleteNoticeInfo, getNoticeInfo, updateNoticeInfo} from "../api/notice";
@@ -154,21 +154,6 @@ const getText = (text: string) => {
   editNotice.value.content = text
 }
 
-const handleRemove = (file: UploadFile) => {
-  fileList.value = []
-}
-
-const handlePictureCardPreview = (file: UploadFile) => {
-  dialogImageUrl.value = file.url!
-  dialogVisible.value = true
-}
-/**
- * 获取学院id
- **/
-const getCollegeId = (id: bigint) => {
-  addOrigin.cid = id
-  editOrigin.value.cid = id
-}
 
 // 分页导航
 const handlePageChange = (val: number) => {
@@ -180,6 +165,8 @@ const handlePageChange = (val: number) => {
 const deleteQuery = reactive<any>({
   ids: []
 })
+
+
 const handleDelete = (index: number, row: any) => {
   ElMessageBox.confirm(
       '确定要删除该公告吗?',
@@ -207,10 +194,12 @@ const handleDelete = (index: number, row: any) => {
 // 表格编辑时弹窗和保存
 const editNotice = ref<Notice>({})
 const editVisible = ref(false);
-const handleEdit = (index: number, row: any) => {
+const handleEdit = async (index: number, row: any) => {
   editNotice.value = {...row}
   editVisible.value = true;
 };
+
+
 const saveEdit = async () => {
   const result = await updateNoticeInfo(editNotice.value)
   if (result.code == 0) {
