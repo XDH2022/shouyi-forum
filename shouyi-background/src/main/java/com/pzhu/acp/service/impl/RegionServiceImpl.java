@@ -70,7 +70,7 @@ public class RegionServiceImpl extends ServiceImpl<RegionMapper, Region>
         }
         //判断父类是否存在
         QueryWrapper<Region> wrapper1 = new QueryWrapper<>();
-        wrapper1.eq("parent_id", region.getParentId());
+        wrapper1.eq("id", region.getParentId());
         Long countParent = regionMapper.selectCount(wrapper1);
         if (countParent == OperationConstant.COUNT_NUM) {
             log.warn("父类地区不存在");
