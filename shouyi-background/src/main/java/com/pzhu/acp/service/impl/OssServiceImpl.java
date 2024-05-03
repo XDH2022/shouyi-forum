@@ -62,7 +62,6 @@ public class OssServiceImpl implements OssService {
                             .build());
 
             //获取上传文件在minio路径
-            //http://127.0.0.1:9000/spzx-bucket/01.jpg
             String url = endPoint + "/" + bucketName + "/" + filename;
 
             return url;

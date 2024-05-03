@@ -1,9 +1,4 @@
 <template>
-  <el-steps :space="200" :active="active" simple>
-    <el-step title="帖子内容" :icon="Edit"/>
-    <el-step title="帖子信息" :icon="Edit"/>
-    <el-step title="发布帖子" :icon="UploadFilled"/>
-  </el-steps>
 
   <Content @show-message="showMessage"/>
 

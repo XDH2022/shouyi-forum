@@ -1,13 +1,16 @@
 <template>
   <div style="margin-top: 45px">
-    <el-steps :space="200" :active="active" simple>
-      <el-step title="问题内容" :icon="Edit"/>
-      <el-step title="问题信息" :icon="Edit"/>
-      <el-step title="发布问题" :icon="UploadFilled"/>
-    </el-steps>
-
-    <Content @show-message="showMessage" style="height: 300px"/>
-
+    <div class="container">
+      <div class="center">
+        <h1 class="title">
+          <el-icon class="icon">
+            <KnifeFork/>
+          </el-icon>
+          问题内容
+        </h1>
+      </div>
+      <Content @show-message="showMessage" style="height: 300px"/>
+    </div>
     <div class="discuss-info">
       <el-form
           label-width="100px"
@@ -37,6 +40,7 @@ import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
 import {addQuestionInfo} from "../api/question";
 import {useUserStore} from "../stores/user";
+import {KnifeFork} from "@element-plus/icons-vue";
 
 const userStore = useUserStore()
 userStore.getUserInfo()
@@ -103,5 +107,22 @@ const saveEdit = async () => {
   position: relative;
   top: 70px;
   left: 300px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 45px;
+}
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: #60d4ff
+}
+
+.icon {
+  font-size: 32px;
 }
 </style>

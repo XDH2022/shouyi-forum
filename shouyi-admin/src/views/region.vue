@@ -164,6 +164,7 @@ const addInRegion = async () => {
     ElMessage.success('添加地区成功！')
     dialogVisible.value = false
     await showRegionInfo()
+    location.reload()
   }else {
     ElMessage.error(result.message)
   }

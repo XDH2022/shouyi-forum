@@ -1,13 +1,16 @@
 <template>
   <div style="margin-top: 45px">
-    <el-steps :space="200" :active="active" simple>
-      <el-step title="帖子内容" :icon="Edit"/>
-      <el-step title="帖子信息" :icon="Edit"/>
-      <el-step title="发布帖子" :icon="UploadFilled"/>
-    </el-steps>
-
-    <Content @show-message="showMessage" style="height: 500px"/>
-
+    <div class="container">
+      <div class="center">
+        <h1 class="title">
+          <el-icon class="icon">
+            <Apple/>
+          </el-icon>
+          帖子内容
+        </h1>
+      </div>
+      <Content @show-message="showMessage" style="height: 500px"/>
+    </div>
     <div class="discuss-info">
       <el-form
           label-width="100px"
@@ -44,6 +47,7 @@ import {addDiscussUpInfo, addDiscussInfo} from "../api/discuss";
 import Tag from "../components/tag.vue";
 import {useUserStore} from "../stores/user";
 import Upload2ALY from "../components/upload2ALY.vue";
+import {Apple, KnifeFork} from "@element-plus/icons-vue";
 
 const userStore = useUserStore()
 userStore.getUserInfo()
@@ -110,5 +114,30 @@ const saveEdit = async () => {
   background: white;
   border-radius: 4px;
   height: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 45px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: #60d4ff
+}
+
+.icon {
+  font-size: 32px;
 }
 </style>

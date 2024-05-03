@@ -1,30 +1,34 @@
 <template>
   <div style="margin-top: 45px">
-    <el-steps :space="200" :active="active" simple>
-      <el-step title="动态内容" :icon="Edit"/>
-      <el-step title="动态信息" :icon="Edit"/>
-      <el-step title="发布动态" :icon="UploadFilled"/>
-    </el-steps>
+    <div class="container">
+      <div class="center">
+        <h1 class="title">
+          <el-icon class="icon">
+            <Mug/>
+          </el-icon>
+          动态内容
+        </h1>
+      </div>
+      <Content @show-message="showMessage" style="height: 300px"/>
+    </div>
+      <div class="discuss-info">
+        <el-form
+            label-width="100px"
+            :model="addDiscuss"
+            style="max-width: 460px">
+          <!--          class="el-form"-->
 
-    <Content @show-message="showMessage" style="height: 300px"/>
-    <div class="discuss-info">
-      <el-form
-          label-width="100px"
-          :model="addDiscuss"
-          style="max-width: 460px">
-<!--          class="el-form"-->
-
-        <el-form-item label="标签名">
-          <tag @get-tag-id="getTagId"/>
-        </el-form-item>
-        <el-form-item>
+          <el-form-item label="标签名">
+            <tag @get-tag-id="getTagId"/>
+          </el-form-item>
+          <el-form-item>
 				<span>
 					<el-button type="primary" @click="saveEdit">发 布</el-button>
 				</span>
-        </el-form-item>
-      </el-form>
+          </el-form-item>
+        </el-form>
+      </div>
     </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -33,6 +37,7 @@ import {useRouter} from "vue-router";
 import {ElMessage} from "element-plus";
 import {addDynamicInfo} from "../api/dynamic";
 import {useUserStore} from "../stores/user";
+import {Apple, KnifeFork, Mug} from "@element-plus/icons-vue";
 
 const userStore = useUserStore()
 userStore.getUserInfo()
@@ -96,5 +101,24 @@ const saveEdit = async () => {
   position: relative;
   top: 70px;
   left: 300px;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 45px;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  font-size: 24px;
+  color: #60d4ff
+}
+
+.icon {
+  font-size: 32px;
 }
 </style>
