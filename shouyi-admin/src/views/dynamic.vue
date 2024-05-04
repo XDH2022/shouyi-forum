@@ -34,7 +34,7 @@
         </el-table-column>
         <el-table-column prop="up" label="点赞数" width="130"></el-table-column>
         <el-table-column prop="createTime" label="发布时间" width="150"></el-table-column>
-        <el-table-column label="操作" width="290" align="center">
+        <el-table-column label="操作"  align="center">
           <template #default="scope">
             <el-button plain type="danger" @click="handleDelete(scope.$index,scope.row)" v-permiss="14">
               删除

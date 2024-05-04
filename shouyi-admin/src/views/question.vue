@@ -32,15 +32,11 @@
             <el-button type="success" plain size="small" @click="showMessage(scope.$index,scope.row)">查看问题</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="审批情况" align="center" width="100">
+        <el-table-column label="审批情况" align="center" >
           <template #default="scope">
             <el-icon v-if="scope.row.isAudit === 1" class="check-icon" name="el-icon-check"><Select /></el-icon>
             <el-icon v-else-if="scope.row.isAudit === 2" class="failed-icon" name="el-icon-close" ><CloseBold /></el-icon>
             <el-icon v-else  name="el-icon-question"><SemiSelect /></el-icon>
-<!--            <el-tag-->
-<!--                :type="scope.row.isAudit === 0 ? 'info' : scope.row.isAudit === 1 ?'success': 'danger'"-->
-<!--            >-->
-<!--            </el-tag>-->
 
           </template>
         </el-table-column>
