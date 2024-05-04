@@ -144,12 +144,12 @@
       </el-form>
       <template #footer>
 				<span class="dialog-footer">
-					<el-button @click="selectRoleVisible">取 消</el-button>
+					<el-button @click="editVisible =false">取 消</el-button>
 					<el-button type="primary" @click="saveEdit">确 定</el-button>
 				</span>
       </template>
     </el-dialog>
-    <el-dialog title="分配角色" v-model="selectRoleVisible" width="30%">
+    <el-dialog title="分配角色"  v-model="selectRoleVisible" width="30%">
       <el-form label-width="70px">
         <el-form-item label="所属角色">
           <el-select v-model="addUserRoleReq.roleId" clearable class="m-2" placeholder="角色类型" size="default"
@@ -165,7 +165,7 @@
       </el-form>
       <template #footer>
 				<span class="dialog-footer">
-					<el-button @click="editVisible = false">取 消</el-button>
+					<el-button @click="selectRoleVisible = false">取 消</el-button>
 					<el-button type="primary" @click="doAddUserRole">确 定</el-button>
 				</span>
       </template>
