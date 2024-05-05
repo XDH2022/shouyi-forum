@@ -244,7 +244,7 @@ public class DiscussServiceImpl extends ServiceImpl<DiscussMapper, Discuss>
                     }
                 }
         );
-        //定时任务每3分钟统计并写入数据库中
+        //定时任务每1分钟统计并写入数据库中
         return Boolean.TRUE;
     }
 

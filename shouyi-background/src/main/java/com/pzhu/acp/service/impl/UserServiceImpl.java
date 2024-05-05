@@ -211,7 +211,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
         User safetyUser = getSafetyUser(dataUser);
         // 3. 记录用户的登录态
         StpUtil.login(safetyUser.getId());
-        // 获取Token
         return StpUtil.getTokenInfo().tokenValue;
     }
 
@@ -406,24 +405,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User>
 
         // 3. 记录用户的登录态
         StpUtil.login(safetyUser.getId());
-
-
-        // 4. 从Redis中读取角色权限表的数据
-        String rolePermissionsJson = (String) redisTemplate.opsForValue().get("ROLE_PERMISSIONS:" + dataUser.getId());
-        if (rolePermissionsJson != null) {
-            List<RolePermission> rolePermissions = GsonUtil.fromJsonList(rolePermissionsJson, RolePermission[].class);
-        }
-        else {
-            // 如果Redis中没有数据，则从数据库中读取并写入Redis
-            List<RolePermission> rolePermissions = rolePermissionMapper.selectList(new QueryWrapper<RolePermission>().eq("role_id", dataUser.getId()));
-            if (rolePermissions != null && !rolePermissions.isEmpty()) {
-                rolePermissionsJson = GsonUtil.toJson(rolePermissions);
-                redisTemplate.opsForValue().set("ROLE_PERMISSIONS:" + dataUser.getId(), rolePermissionsJson, 5, TimeUnit.MINUTES);
-            }
-        }
         return StpUtil.getTokenInfo().tokenValue;
     }
-
 
     @Override
     public Boolean updateUserPassword(UserUpdatePasswordQuery userUpdatePasswordQuery) {

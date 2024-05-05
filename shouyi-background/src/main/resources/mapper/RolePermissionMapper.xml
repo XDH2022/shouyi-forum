@@ -29,6 +29,6 @@
             resultMap="selectPermissionResultMap">
         select permission_id
         from role_permission
-        where role_id = #{roleId}
+        where role_id = #{roleId} and is_delete = 0
     </select>
 </mapper>
